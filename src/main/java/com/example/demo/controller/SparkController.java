@@ -24,19 +24,14 @@ public class SparkController {
 
     @Autowired
     private SparkService sparkService;
-    @PostMapping("/read/{column}/{value}")
+    @PostMapping("/concat")
     public ResponseEntity<?> readCsv(@RequestBody MultipartFile file,
-                                     @PathVariable("column") String col,
-                                     @PathVariable("value") String value) throws IOException {
+                                     @RequestParam("column") String col,
+                                     @RequestParam("value") String value) throws IOException {
 
         logger.info("Starting with file reading "+file.getOriginalFilename());
 
         String res = sparkService.concat(file,col,value);
-
-        logger.warn("something went wrong");
-        if(res.equals(null)){
-            return new ResponseEntity<>("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
 
         logger.info("concated successfully");
 
@@ -45,18 +40,13 @@ public class SparkController {
     }
 
 
-    @PostMapping("/fullmask/{column}")
+    @PostMapping("/fullmask")
     public ResponseEntity<?> fullMask(@RequestBody MultipartFile file,
-                                     @PathVariable("column") String col) throws IOException {
+                                     @RequestParam("column") String col) throws IOException {
 
         logger.info("Started fullmasking process "+file.getOriginalFilename());
 
         String res = sparkService.fullMask(file,col);
-
-        if(res.equals(null)){
-            logger.warn("something went wrong");
-            return new ResponseEntity<>("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
 
         logger.info("full mask applied successfully");
 
@@ -64,20 +54,14 @@ public class SparkController {
 
     }
 
-
-    @PostMapping("/removeExact/{column}/{value}")
+    @PostMapping("/removeExact")
     public ResponseEntity<?> removeExact(@RequestBody MultipartFile file,
-                                     @PathVariable("column") String col,
-                                     @PathVariable("value") String value) throws IOException {
+                                         @RequestParam("column") String col,
+                                         @RequestParam("value") String value) throws IOException {
 
         logger.info("started remove exact process");
 
         String res = sparkService.exactMatch(file,col,value);
-
-        logger.warn("something went wrong");
-        if(res.equals(null)){
-            return new ResponseEntity<>("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
 
         logger.info("removed successfully");
 
@@ -85,4 +69,67 @@ public class SparkController {
 
     }
 
-}
+
+    @PostMapping("/removeSpecialChar")
+    public ResponseEntity<?> removeSpecialChars(@RequestBody MultipartFile file,
+                                         @RequestParam("column") String col) throws IOException {
+
+        logger.info("started remove special characters process");
+
+        String res = sparkService.removeSpecialCharacters(file,col);
+
+        logger.info("removed all special characters successfully");
+
+        return ResponseEntity.ok(res);
+
+    }
+    @PostMapping("/removeNumbers")
+    public ResponseEntity<?> removeNumbers(@RequestBody MultipartFile file,
+                                                @RequestParam("column") String col) throws IOException {
+
+        logger.info("started remove numbers process");
+
+        String res = sparkService.removeNumbers(file,col);
+
+        logger.info("removed all numbers successfully");
+
+        return ResponseEntity.ok(res);
+
+    }
+
+    @PostMapping("/removeSelectedCharacters")
+    public ResponseEntity<?> removeSelectedChars(@RequestBody MultipartFile file,
+                                                 @RequestParam("column") String col,
+                                                 @RequestParam("value") String value) throws IOException {
+
+        logger.info("started remove selected characters process");
+
+        String res = sparkService.removeSelectedCharacters(file,col,value);
+
+        logger.info("removed all selected characters successfully");
+
+        return ResponseEntity.ok(res);
+
+    }
+
+    @PostMapping("/partialMask")
+    public ResponseEntity<?> partialMask(@RequestBody MultipartFile file,
+                                                 @RequestParam("column") String col,
+                                                 @RequestParam("length") Integer length) throws IOException {
+
+        logger.info("started remove selected characters process");
+
+        String res = sparkService.partialMask(file,col,length);
+
+        logger.info("removed all selected characters successfully");
+
+        return ResponseEntity.ok(res);
+
+    }
+
+
+
+
+
+
+    }
